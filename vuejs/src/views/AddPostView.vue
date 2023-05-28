@@ -18,39 +18,29 @@
 </template>
 
 <script>
+import fetchPostApi from '../services/fetchPostApi';
 export default {
   data() {
     return {
       title: '',
       body: '',
       post: null,
-      errorMessage: '', // Add an error message variable
+      errorMessage: '', 
     };
   },
   methods: {
     async createPost() {
+      try {
       const post = {
         title: this.title,
         body: this.body,
       };
-      try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://127.0.0.1:8000/api/post', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify(post),
-        });
-        if (!response.ok) {
-          throw new Error(`${response.status}: ${response.statusText}`);
-        }
-        const responseData = await response.json();
+        const responseData = await fetchPostApi.post('post', post,token);
         this.post = responseData.post;
         this.title = '';
         this.body = '';
-        this.errorMessage = ''; // Clear the error message
+        this.errorMessage = ''; 
       } catch (error) {
         this.errorMessage = error.message;
       }

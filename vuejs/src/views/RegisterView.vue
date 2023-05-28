@@ -27,6 +27,7 @@
 
 <script>
 import { mapMutations } from 'vuex';
+import authFetchApi from '../services/authFetchApi';
 
 export default {
 data() {
@@ -40,23 +41,13 @@ data() {
 },
   methods: {
     async register() {
-      const data = {
-        name: this.name,
-        email: this.email,
-        password: this.password,
-      };
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-        if (!response.ok) {
-          throw new Error(`${response.status}: ${response.statusText}`);
-        }
-        const responseData = await response.json();
+        const data = {
+          name: this.name,
+          email: this.email,
+          password: this.password,
+        };
+        const responseData = await authFetchApi.post('register', data);
         const token = responseData.authorization.token;
         localStorage.setItem('token', token);
         this.setToken(token);
